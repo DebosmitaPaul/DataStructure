@@ -10,8 +10,11 @@ public class Sort_SinglyLinkedList {
     public static void main(String[] args) {
         Sort_SinglyLinkedList list = new Sort_SinglyLinkedList();
         Node head = list.createLinkedList();
+        System.out.println("before sort");
+        list.displayList(head);
 
         Node node = list.sortLinkedList(head);
+        System.out.println("after sort");
         list.displayList(node);
     }
 
@@ -24,22 +27,45 @@ public class Sort_SinglyLinkedList {
         midNode.next = null;
         Node leftNode = sortLinkedList(head);
         Node rightNode = sortLinkedList(nextOfMid);
-         return head;
+        Node n = sortNodes(leftNode,rightNode);
+        return n;
     }
-    Node sortNodes(Node a, Node b){
-        if(a==null){
-            return b;
+    private Node sortNodes(Node leftNode, Node rightNode) {
+        Node result = null;
+        while (leftNode!=null && rightNode != null){
+            if(leftNode.data<rightNode.data){
+                result = insertNode(leftNode.data, result);
+                leftNode= leftNode.next;
+            }
+            else{
+                result = insertNode(rightNode.data, result);
+                rightNode = rightNode.next;
+            }
         }
-        if (b==null){
-            return a;
+        while (leftNode!= null){
+            result = insertNode(leftNode.data, result);
+            leftNode = leftNode.next;
         }
-        if(a.data>b.data){
-            //Node temp = a.next;
-            a.next = b.next;
-            b.next = null;
+        while (rightNode!=null){
+            result = insertNode(rightNode.data,result);
+            rightNode = rightNode.next;
         }
-        return a;
+        return result;
     }
+
+    private Node insertNode(int data, Node head){
+        if(head == null){
+            return new Node(data);
+        }
+        Node current = head;
+        while (current.next != null){
+            current = current.next;
+        }
+        Node newNode = new Node(data);
+        current.next = newNode;
+        return head;
+    }
+
     private Node getMiddelNode(Node head) {
         Node slow_ptr = head;
         Node fast_ptr = head;
