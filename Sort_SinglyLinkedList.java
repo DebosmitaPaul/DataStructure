@@ -44,7 +44,7 @@ public class Sort_SinglyLinkedList {
         }
         while (leftNode!= null){
             result = insertNode(leftNode.data, result);
-            leftNode = leftNode.next;
+             leftNode = leftNode.next;
         }
         while (rightNode!=null){
             result = insertNode(rightNode.data,result);
