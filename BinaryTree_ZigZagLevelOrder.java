@@ -16,13 +16,50 @@ public class BinaryTree_ZigZagLevelOrder {
         BinaryTree_ZigZagLevelOrder zigZag = new BinaryTree_ZigZagLevelOrder();
         TreeNode root = zigZag.createBinaryTree();
         List<List<Integer>> lists =zigZag.zigzagLevelOrder(root);
-
-        lists.forEach(i->{
-            System.out.println(i);
-        });
+        System.out.println(lists);
+//        lists.forEach(i->{
+//            System.out.println(i);
+//        });
     }
+
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        if(root!=null){
+            Queue<TreeNode> queue = new LinkedList<>();
+            queue.offer(root);
+            int level = 1;
+            while (!queue.isEmpty()){
+                List<Integer> list = new ArrayList<>();
+                int size = queue.size();
+                while (size>0) {
+                    size--;
+                    TreeNode curr = queue.poll();
+                    list.add(curr.data);
+                    if (curr.left != null) {
+                        queue.offer(curr.left);
+                    }
+                    if (curr.right != null) {
+                        queue.offer(curr.right);
+                    }
+                }
+                if(level%2 != 0){
+                    result.add(list);
+                }else{
+                    List<Integer> revList = new ArrayList<>();
+                    for (int i = list.size()-1; i>=0 ; i--) {
+                        revList.add(list.get(i));
+                    }
+                    result.add(revList);
+                }
+                level++;
+            }
+        }
+        return result;
+    }
+
+    //Method 2 -> my implementation
     static Map<Integer, List<Integer>> maplist = new HashMap<>();
-    List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+    List<List<Integer>> zigzagLevelOrder_02(TreeNode root) {
         List<List<Integer>> resultList = new ArrayList<>();
         addDepthOfNodes(root,0);
         maplist.keySet().stream().sorted().forEach(i->{
