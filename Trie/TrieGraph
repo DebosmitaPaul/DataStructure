@@ -1,0 +1,115 @@
+package TrieConcept;
+
+import java.util.*;
+
+public class TrieGraph{
+    class TrieNode {
+        Map<Character, TrieNode> trieChild;
+        boolean endOfWord;
+        public TrieNode(){
+            trieChild = new HashMap<>();
+            endOfWord = false;
+        }
+    }
+
+    public static Map<Character, List<TrieNode>> graph;
+
+    public static void main(String[] args) {
+        TrieGraph trieGraph = new TrieGraph();
+        trieGraph.insert("cat");
+        trieGraph.insert("cab");
+        trieGraph.insert("car");
+        trieGraph.insert("cut");
+        boolean isPresent = trieGraph.search("cag");
+        System.out.println(isPresent);
+        System.out.println(trieGraph.prefixSearch("cu"));
+        System.out.println(trieGraph.prefixSearch("ap"));
+        System.out.println(trieGraph.prefixSearch("z"));
+        System.out.println(trieGraph.prefixWordCount("z"));
+        System.out.println(trieGraph.autoCompleteWord("ca")); // all word
+    }
+
+    private List<String> autoCompleteWord(String prefix) {
+        List<String> result = new ArrayList<>();
+        TrieNode curr = root;
+        for(var ch : prefix.toCharArray()){
+            if(!curr.trieChild.containsKey(ch)){
+                return result;
+            }
+            curr = curr.trieChild.get(ch);
+        }
+
+//        getWord(curr,new StringBuilder(prefix), result);
+        getWord(curr, prefix, result);
+        return result;
+    }
+
+    private void getWord(TrieNode curr, String prefix, List<String> result) {
+        if(curr.endOfWord){
+            result.add(prefix);
+        }
+        for(var entry : curr.trieChild.entrySet()){
+//            prefix.append(entry.getKey());
+            getWord(entry.getValue(), prefix + entry.getKey(), result);
+//            prefix.deleteCharAt(prefix.length()-1);
+        }
+    }
+
+    private int prefixWordCount(String prefix) {
+        TrieNode curr = root;
+        int count =0;
+        for(char ch : prefix.toCharArray()){
+            if(!curr.trieChild.containsKey(ch)){
+                return 0;
+            }
+            curr = curr.trieChild.get(ch);
+        }
+
+        return getCount(curr);
+    }
+
+    private int getCount(TrieNode curr) {
+        if(curr.endOfWord) {
+            return 1;
+        }
+        int count =0;
+        for(var val : curr.trieChild.values()){
+            var data = curr.trieChild.entrySet();
+            count += getCount(val);
+        }
+        return count;
+    }
+
+    private boolean prefixSearch(String prefix) {
+        TrieNode curr = root;
+        for(char ch : prefix.toCharArray()) {
+            if (!curr.trieChild.containsKey(ch)) {
+                return false;
+            }
+            curr = curr.trieChild.get(ch);
+        }
+        return true;
+    }
+
+    private boolean search(String word) {
+        TrieNode curr = root;
+        for(char wd : word.toCharArray()){
+            if( curr.trieChild.containsKey(wd)) {
+                curr = curr.trieChild.get(wd);
+            }else{
+                return false;
+            }
+        }
+        return curr.endOfWord;
+    }
+
+    public TrieNode root = new TrieNode();
+    void insert(String str){
+        TrieNode curr = root;
+        for(char ch : str.toCharArray()){
+            curr.trieChild.putIfAbsent(ch, new TrieNode());
+            curr= curr.trieChild.get(ch);
+        }
+        curr.endOfWord = true;
+    }
+}
